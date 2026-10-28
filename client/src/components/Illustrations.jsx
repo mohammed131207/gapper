@@ -1,0 +1,105 @@
+// Hand-drawn SVG scenes in the Gapper palette: a student on a winding path toward a distant city.
+
+function Leaf({ x, y, rotate = 0, scale = 1, fill }) {
+  return (
+    <path
+      d="M0 0C-11-26-6-54 8-74 22-52 19-24 0 0Z"
+      fill={fill}
+      transform={`translate(${x} ${y}) rotate(${rotate}) scale(${scale})`}
+    />
+  );
+}
+
+export function HeroIllustration({ className, label }) {
+  return (
+    <svg className={className} viewBox="0 0 600 440" role="img" aria-label={label}>
+      <path d="M118 170C150 70 270 18 390 30c120 12 205 88 205 190v220H70c-10-90 18-190 48-270Z" fill="#f1e2da" />
+
+      <g fill="#ccd4c0">
+        <rect x="392" y="122" width="22" height="98" rx="2" />
+        <rect x="418" y="78" width="26" height="142" rx="2" />
+        <rect x="448" y="104" width="22" height="116" rx="2" />
+        <rect x="474" y="52" width="30" height="168" rx="2" />
+        <path d="M489 24l9 28h-18z" />
+        <rect x="508" y="112" width="24" height="108" rx="2" />
+        <rect x="536" y="140" width="20" height="80" rx="2" />
+      </g>
+      <g fill="#dfe4d5">
+        <rect x="423" y="92" width="5" height="7" /><rect x="433" y="92" width="5" height="7" />
+        <rect x="423" y="110" width="5" height="7" /><rect x="433" y="110" width="5" height="7" />
+        <rect x="481" y="70" width="5" height="7" /><rect x="492" y="70" width="5" height="7" />
+        <rect x="481" y="88" width="5" height="7" /><rect x="492" y="88" width="5" height="7" />
+        <rect x="481" y="106" width="5" height="7" /><rect x="492" y="106" width="5" height="7" />
+        <rect x="514" y="126" width="5" height="7" /><rect x="522" y="126" width="5" height="7" />
+      </g>
+
+      <path d="M140 236c90-56 180-40 260-44 70-4 140 4 200-6v254H140Z" fill="#d7decb" />
+      <path d="M0 300c90-48 200-58 300-34 84 20 170-14 300-6v180H0Z" fill="#ead3c9" />
+
+      <path d="M200 440c50-30 190-40 190-92" fill="none" stroke="#f8f1e7" strokeWidth="46" strokeLinecap="round" />
+      <path d="M390 348c-6-40-74-56-20-86" fill="none" stroke="#f8f1e7" strokeWidth="26" strokeLinecap="round" />
+      <path d="M370 262c40-22 82-30 98-48" fill="none" stroke="#f8f1e7" strokeWidth="12" strokeLinecap="round" />
+
+      <path d="M0 336c70-40 150-36 220-2v106H0Z" fill="#aab896" />
+      <path d="M340 372c80-46 170-50 260-64v132H340Z" fill="#8c9e77" />
+      <circle cx="74" cy="318" r="16" fill="#97a783" />
+      <circle cx="96" cy="322" r="11" fill="#8c9e77" />
+      <circle cx="430" cy="352" r="12" fill="#7c8f68" />
+
+      <g fill="#ebe3d6" stroke="#d6cab8" strokeWidth="1.5">
+        <ellipse cx="246" cy="420" rx="28" ry="8.5" />
+        <ellipse cx="330" cy="392" rx="24" ry="7.5" />
+        <ellipse cx="384" cy="362" rx="17" ry="5.5" />
+        <ellipse cx="380" cy="300" rx="12" ry="4" />
+      </g>
+
+      <g>
+        <ellipse cx="330" cy="391" rx="20" ry="4" fill="#cfc2ae" opacity=".7" />
+        <rect x="318" y="328" width="10" height="60" rx="4" fill="#6c7064" />
+        <rect x="332" y="328" width="10" height="60" rx="4" fill="#61655a" />
+        <ellipse cx="322" cy="389" rx="8" ry="4" fill="#3b3d35" />
+        <ellipse cx="338" cy="389" rx="8" ry="4" fill="#3b3d35" />
+        <rect x="306" y="286" width="9" height="42" rx="4.5" fill="#a9b39b" />
+        <rect x="345" y="286" width="9" height="42" rx="4.5" fill="#a9b39b" />
+        <rect x="312" y="280" width="36" height="56" rx="10" fill="#b6bfa8" />
+        <rect x="314" y="284" width="32" height="42" rx="9" fill="#4f6443" />
+        <rect x="319" y="306" width="22" height="14" rx="4" fill="#435638" />
+        <rect x="326" y="270" width="8" height="10" rx="3" fill="#c49a83" />
+        <circle cx="330" cy="260" r="14" fill="#3a3830" />
+      </g>
+
+      <Leaf x={548} y={444} rotate={-28} scale={1.15} fill="#4f6443" />
+      <Leaf x={566} y={444} rotate={6} scale={1.3} fill="#6c815c" />
+      <Leaf x={584} y={444} rotate={30} scale={1} fill="#4f6443" />
+      <Leaf x={530} y={444} rotate={-52} scale={.8} fill="#7f9469" />
+      <Leaf x={24} y={444} rotate={-14} scale={.75} fill="#7f9469" />
+      <Leaf x={40} y={444} rotate={18} scale={.9} fill="#5d7250" />
+      <Leaf x={10} y={444} rotate={-40} scale={.6} fill="#5d7250" />
+    </svg>
+  );
+}
+
+export function HillsIllustration({ className, label }) {
+  return (
+    <svg className={className} viewBox="0 0 480 220" role="img" aria-label={label}>
+      <path d="M0 120c70-40 150-60 240-44 90 16 160-12 240-28v172H0Z" fill="#dde3d1" />
+      <path d="M0 150c90-30 170-22 250-6 80 16 150 0 230-20v96H0Z" fill="#b6c2a2" />
+      <path d="M0 184c110-34 250-40 480-14v50H0Z" fill="#8c9e77" />
+      <g transform="translate(250 150)">
+        <path d="M0 0c0-14 1-26-1-38" stroke="#4f6443" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+        <path d="M-1-30c-16-2-26-12-28-26 16 0 26 10 28 26Z" fill="#6c815c" />
+        <path d="M-1-38c14-6 26-4 34 6-12 8-26 6-34-6Z" fill="#4f6443" />
+      </g>
+    </svg>
+  );
+}
+
+export function CornerLeaves({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 160 160" aria-hidden="true">
+      <Leaf x={150} y={162} rotate={-40} scale={1.2} fill="#c9d3bb" />
+      <Leaf x={150} y={162} rotate={-8} scale={1.4} fill="#b4c2a1" />
+      <Leaf x={150} y={162} rotate={-70} scale={.9} fill="#dfe6d4" />
+    </svg>
+  );
+}

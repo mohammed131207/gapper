@@ -1,0 +1,21 @@
+# Render settings: a free Node server in Frankfurt (the closest region to Palestine).
+# The free disk is temporary, so accounts and progress live in a Turso database when its two variables are set.
+services:
+  - type: web
+    name: gapper
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: node --disable-warning=ExperimentalWarning server/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      # Render sits in front of the app as a proxy; this makes login cookies Secure over HTTPS.
+      - key: TRUST_PROXY
+        value: "1"
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false

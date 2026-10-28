@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>قالب README للمشاريع · Gapper</title>
+<style>
+  :root { --ink: #2a2d24; --accent: #4f6443; --line: #e6dfd3; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f3efe7; font-family: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif; color: var(--ink); line-height: 1.7; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-family: 'Noto Naskh Arabic', serif; font-weight: 500; margin: 0 0 6px; }
+  p { color: #55584c; margin: 0 0 12px; }
+  .card { background: #fbf9f5; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 18px; }
+  .head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 13px; color: #868778; }
+  button { background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: 8px 16px; font: inherit; font-weight: 600; cursor: pointer; }
+  pre { margin: 0; padding: 18px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; white-space: pre-wrap; font-family: Consolas, 'Courier New', monospace; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>قالب README للمشاريع</h1>
+    <p>انسخ القالب إلى ملف <code>README.md</code> في جذر مستودعك واستبدل النصوص بمعلومات مشروعك.</p>
+    <p>القالب مكتوب بالإنجليزية لأن أغلب أصحاب العمل والمطورين حول العالم يقرؤون بها، وهذا يجعل مشروعك أوضح في ملف أعمالك. يمكنك ترجمته إن كان جمهورك عربيًا.</p>
+    <div class="card">
+      <div class="head"><span dir="ltr">README.md</span><button id="copy" type="button">انسخ</button></div>
+<pre id="tpl" dir="ltr"># Project name
+
+One or two sentences: what the project does and who it is for.
+
+![Screenshot of the project](docs/screenshot.png)
+
+## Features
+
+- Main feature one
+- Main feature two
+- Main feature three
+
+## Getting started
+
+### Requirements
+
+- List the tools and versions needed (for example: Python 3.12, Node 22)
+
+### Installation
+
+```bash
+git clone https://github.com/your-name/project-name.git
+cd project-name
+# install dependencies
+```
+
+### Running
+
+```bash
+# the command that starts the project
+```
+
+## How it works
+
+A short explanation of the main parts of the project and how they fit together.
+
+## What I learned
+
+- A technical challenge and how you solved it
+- Something you would do differently next time
+
+## Team and roles
+
+- Name — role and main contributions
+
+## License
+
+State the license, or "All rights reserved" for coursework.
+</pre>
+    </div>
+  </div>
+  <script>
+    document.getElementById('copy').addEventListener('click', async (e) => {
+      try {
+        await navigator.clipboard.writeText(document.getElementById('tpl').textContent);
+        e.target.textContent = 'تم النسخ!';
+      } catch {
+        e.target.textContent = 'حدّد النص وانسخه يدويًا';
+      }
+      setTimeout(() => { e.target.textContent = 'انسخ'; }, 2000);
+    });
+  </script>
+</body>
+</html>

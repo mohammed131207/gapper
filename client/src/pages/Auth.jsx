@@ -4,7 +4,7 @@ import { Eye, EyeOff, UserRound } from 'lucide-react';
 import { useAuth } from '../auth.jsx';
 import { useI18n } from '../i18n.jsx';
 import { LangToggle, Logo, useDocumentTitle, useToast } from '../components/ui.jsx';
-import { CornerLeaves } from '../components/Illustrations.jsx';
+import { HillsIllustration } from '../components/Illustrations.jsx';
 
 export function PasswordInput({ id, value, onChange, autoComplete, placeholder, inputRef }) {
   const { t } = useI18n();
@@ -26,57 +26,51 @@ function safeNext(value) {
   return value && value.startsWith('/') && !value.startsWith('//') ? value : '/dashboard';
 }
 
+// /login and /signup each show their own form; a link at the bottom moves between them.
 export default function Auth({ mode }) {
   const { t } = useI18n();
-  useDocumentTitle(mode === 'login' ? t('auth.loginTitle') : t('auth.createTitle'));
+  const isLogin = mode === 'login';
+  useDocumentTitle(isLogin ? t('auth.loginTitle') : t('auth.createTitle'));
   const { login, register, startGuest, user } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
   const [params] = useSearchParams();
   const next = safeNext(params.get('next'));
+  const nextQuery = params.get('next') ? `?next=${encodeURIComponent(next)}` : '';
 
-  const [loginForm, setLoginForm] = useState({ email: '', password: '', remember: true });
-  const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '' });
-  const [loginError, setLoginError] = useState('');
-  const [signupError, setSignupError] = useState('');
+  const [form, setForm] = useState({ name: '', email: '', password: '', remember: true });
+  const [error, setError] = useState('');
   const [busy, setBusy] = useState('');
-  const loginEmail = useRef(null);
-  const signupName = useRef(null);
+  const firstField = useRef(null);
+  const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
   useEffect(() => {
-    (mode === 'login' ? loginEmail : signupName).current?.focus();
+    setError('');
+    // Only with a mouse: on phones, focusing a field would open the keyboard over the page.
+    if (window.matchMedia('(pointer: fine)').matches) firstField.current?.focus();
   }, [mode]);
 
-  async function onLogin(e) {
+  async function submit(e) {
     e.preventDefault();
-    setLoginError('');
-    setBusy('login');
+    setError('');
+    setBusy('form');
     try {
-      const u = await login(loginForm.email, loginForm.password, loginForm.remember);
-      navigate(u.onboarded ? next : '/onboarding', { replace: true });
+      if (isLogin) {
+        const u = await login(form.email, form.password, form.remember);
+        navigate(u.onboarded ? next : '/onboarding', { replace: true });
+      } else {
+        await register(form.name, form.email, form.password);
+        toast(t('auth.welcomeToast'));
+        navigate('/onboarding', { replace: true });
+      }
     } catch (err) {
-      setLoginError(err.message);
+      setError(err.message);
     } finally {
       setBusy('');
     }
   }
 
-  async function onSignup(e) {
-    e.preventDefault();
-    setSignupError('');
-    setBusy('signup');
-    try {
-      await register(signupForm.name, signupForm.email, signupForm.password);
-      toast(t('auth.welcomeToast'));
-      navigate('/onboarding', { replace: true });
-    } catch (err) {
-      setSignupError(err.message);
-    } finally {
-      setBusy('');
-    }
-  }
-
-  async function onGuest() {
+  async function continueAsGuest() {
     setBusy('guest');
     try {
       const u = user?.isGuest ? user : await startGuest();
@@ -91,79 +85,69 @@ export default function Auth({ mode }) {
   return (
     <div className="auth-page">
       <div className="page-corner"><LangToggle compact /></div>
-      <div className={`auth-card auth-${mode}`}>
-        <section className="auth-panel auth-panel-login" aria-labelledby="login-title">
+      <div className="auth-card">
+        <section className="auth-panel" aria-labelledby="auth-title">
           <Logo />
-          <h1 id="login-title" className="auth-title">{t('auth.welcomeBack')}</h1>
-          <p className="auth-sub">{t('auth.loginSub')}</p>
-          <form onSubmit={onLogin} className="form">
+          <h1 id="auth-title" className="auth-title">{isLogin ? t('auth.welcomeBack') : t('auth.createTitle')}</h1>
+          <p className="auth-sub">{isLogin ? t('auth.loginSub') : t('auth.createSub')}</p>
+
+          <form onSubmit={submit} className="form">
+            {!isLogin && (
+              <label className="field">
+                <span>{t('auth.fullName')}</span>
+                <input
+                  ref={firstField} type="text" autoComplete="name" placeholder={t('auth.namePh')} required minLength={2} maxLength={60}
+                  value={form.name} onChange={set('name')}
+                />
+              </label>
+            )}
             <label className="field">
               <span>{t('auth.email')}</span>
               <input
-                ref={loginEmail} type="email" autoComplete="email" placeholder="you@example.com" required dir="ltr"
-                value={loginForm.email} onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+                ref={isLogin ? firstField : null} type="email" autoComplete="email" placeholder="you@example.com" required dir="ltr"
+                value={form.email} onChange={set('email')}
               />
             </label>
-            <label className="field" htmlFor="login-password">
+            <label className="field" htmlFor="auth-password">
               <span>{t('auth.password')}</span>
               <PasswordInput
-                id="login-password" autoComplete="current-password" placeholder={t('auth.passwordPh')}
-                value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                id="auth-password" autoComplete={isLogin ? 'current-password' : 'new-password'}
+                placeholder={isLogin ? t('auth.passwordPh') : t('auth.newPasswordPh')}
+                value={form.password} onChange={set('password')}
               />
             </label>
-            <label className="check">
-              <input type="checkbox" checked={loginForm.remember} onChange={(e) => setLoginForm({ ...loginForm, remember: e.target.checked })} />
-              <span>{t('auth.remember')}</span>
-            </label>
-            {loginError && <p className="form-error" role="alert">{loginError}</p>}
+            {isLogin && (
+              <label className="check">
+                <input type="checkbox" checked={form.remember} onChange={(e) => setForm({ ...form, remember: e.target.checked })} />
+                <span>{t('auth.remember')}</span>
+              </label>
+            )}
+            {error && <p className="form-error" role="alert">{error}</p>}
             <button type="submit" className="btn btn-primary btn-block" disabled={!!busy}>
-              {busy === 'login' ? t('auth.loggingIn') : t('auth.login')}
+              {isLogin
+                ? (busy === 'form' ? t('auth.loggingIn') : t('auth.login'))
+                : (busy === 'form' ? t('auth.creating') : t('auth.signup'))}
             </button>
           </form>
+
+          {!isLogin && <p className="privacy-note">{t('auth.privacy')}</p>}
+
           <div className="divider"><span>{t('auth.or')}</span></div>
-          <button type="button" className="btn btn-secondary btn-block" onClick={onGuest} disabled={!!busy}>
+          <button type="button" className="btn btn-secondary btn-block" onClick={continueAsGuest} disabled={!!busy}>
             <UserRound size={17} aria-hidden="true" /> {busy === 'guest' ? t('landing.settingUp') : t('auth.guest')}
           </button>
+
           <p className="auth-switch">
-            {t('auth.noAccount')} <Link to={`/signup${params.get('next') ? `?next=${encodeURIComponent(next)}` : ''}`}>{t('auth.signup')}</Link>
+            {isLogin ? t('auth.noAccount') : t('auth.haveAccount')}{' '}
+            <Link to={`${isLogin ? '/signup' : '/login'}${nextQuery}`}>{isLogin ? t('auth.signup') : t('auth.login')}</Link>
           </p>
         </section>
 
-        <section className="auth-panel auth-panel-signup" aria-labelledby="signup-title">
-          <CornerLeaves className="auth-leaves" />
-          <span className="auth-mobile-logo"><Logo /></span>
-          <h2 id="signup-title" className="auth-title">{t('auth.createTitle')}</h2>
-          <p className="auth-sub">{t('auth.createSub')}</p>
-          <form onSubmit={onSignup} className="form">
-            <label className="field">
-              <span>{t('auth.fullName')}</span>
-              <input
-                ref={signupName} type="text" autoComplete="name" placeholder={t('auth.namePh')} required minLength={2} maxLength={60}
-                value={signupForm.name} onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })}
-              />
-            </label>
-            <label className="field">
-              <span>{t('auth.email')}</span>
-              <input
-                type="email" autoComplete="email" placeholder="you@example.com" required dir="ltr"
-                value={signupForm.email} onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
-              />
-            </label>
-            <label className="field" htmlFor="signup-password">
-              <span>{t('auth.password')}</span>
-              <PasswordInput
-                id="signup-password" autoComplete="new-password" placeholder={t('auth.newPasswordPh')}
-                value={signupForm.password} onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
-              />
-            </label>
-            {signupError && <p className="form-error" role="alert">{signupError}</p>}
-            <button type="submit" className="btn btn-primary btn-block" disabled={!!busy}>
-              {busy === 'signup' ? t('auth.creating') : t('auth.signup')}
-            </button>
-          </form>
-          <p className="privacy-note">{t('auth.privacy')}</p>
-          <p className="auth-switch">{t('auth.haveAccount')} <Link to="/login">{t('auth.login')}</Link></p>
-        </section>
+        <aside className="auth-aside" aria-hidden="true">
+          <p className="auth-tagline">{t('landing.h1a')}<br />{t('landing.h1b')}</p>
+          <p>{t('landing.ctaTitle')}</p>
+          <HillsIllustration className="auth-hills" />
+        </aside>
       </div>
     </div>
   );
